@@ -14,11 +14,11 @@ func NewAdminData(data *Data) *AdminData {
 }
 
 // 获取信息
-func (d *AdminData) GetInfosData(id int) (*model.User, error) {
-	var result *model.User
+func (d *AdminData) GetInfosData(id int) (model.User, error) {
+	var result model.User
 	err := d.DB.DBClient.Model(&model.User{}).Where("id = ?", id).First(&result).Error
 	if err != nil {
-		return nil, err
+		return model.User{}, err
 	}
 	return result, nil
 }
@@ -34,7 +34,7 @@ func (d *AdminData) AddInfosData(user model.User) (*model.User, error) {
 
 // 修改信息
 func (d *AdminData) UpdateInfosData(user model.User) (*model.User, error) {
-	err := d.DB.DBClient.Model(&model.User{}).Where("id = ?", user.Id).Updates(&user).Error
+	err := d.DB.DBClient.Model(&model.User{}).Where("id = ?", user.Id).Updates(&user).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

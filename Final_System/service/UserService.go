@@ -61,14 +61,16 @@ func (s *UserService) LoginService(c *gin.Context) {
 		return
 	}
 
-	if _, err := s.UserBiz.LoginBiz(loginReq.Username, loginReq.Password); err != nil {
+	if tokenString, err := s.UserBiz.LoginBiz(loginReq.Username, loginReq.Password); err != nil {
 		c.JSON(400, gin.H{
 			"error": "账号或密码错误",
 		})
 		return
+	} else {
+		c.JSON(200, gin.H{
+			"data":    tokenString,
+			"message": "登录成功",
+		})
 	}
-	c.JSON(200, gin.H{
-		"message": "登录成功",
-	})
 
 }

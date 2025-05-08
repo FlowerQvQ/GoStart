@@ -18,19 +18,15 @@ func NewAdminService(adminBiz *biz.AdminBiz) *AdminService {
 }
 
 // 通过Id查询用户信息
-
 func (s *AdminService) GetInfosService(c *gin.Context) {
 	var infos scheme.GetReq
-
 	if err := c.ShouldBindJSON(&infos); err != nil {
 		c.JSON(400, gin.H{
 			"error": "参数错误",
 		})
 		return
 	}
-
 	//验证用户凭证
-
 	//用user接收biz返回的信息
 	user, err := s.AdminBiz.GetInfosBiz(infos.Id)
 	if err != nil {
@@ -70,6 +66,13 @@ func (s *AdminService) AddInfosService(c *gin.Context) {
 		Phone:    addInfos.Phone,
 		Sex:      addInfos.Sex,
 	}
+	//权限验证，只有管理员能添加用户
+	if !UserAuth(c) {
+		c.JSON(403, gin.H{
+			"error": "权限不足，不能添加用户",
+		})
+		return
+	}
 	newUser, err := s.AdminBiz.AddInfosBiz(*addNewUser)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -77,6 +80,7 @@ func (s *AdminService) AddInfosService(c *gin.Context) {
 		})
 		return
 	}
+
 	addWithoutPassword := &model.User{
 		Id:       newUser.Id,
 		Username: newUser.Username,
@@ -101,13 +105,6 @@ func (s *AdminService) UpdateInfosService(c *gin.Context) {
 		return
 	}
 
-	if updateInfos.Id == 0 {
-		c.JSON(400, gin.H{
-			"error": "无效的ID",
-		})
-		return
-	}
-
 	Infos := &model.User{
 		Id:       updateInfos.Id,
 		Password: updateInfos.Password,
@@ -115,6 +112,15 @@ func (s *AdminService) UpdateInfosService(c *gin.Context) {
 		Phone:    updateInfos.Phone,
 		Sex:      updateInfos.Sex,
 	}
+
+	//权限验证
+	if !CheckPermission(c, updateInfos.Id) {
+		c.JSON(403, gin.H{
+			"error": "权限不足，不能修改他人信息",
+		})
+		return
+	}
+
 	user, err := s.AdminBiz.UpdateInfosBiz(*Infos)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -129,10 +135,19 @@ func (s *AdminService) UpdateInfosService(c *gin.Context) {
 		Sex:      user.Sex,
 		IsAdmin:  user.IsAdmin,
 	}
+	if updateInfos.Id == 0 {
+		c.JSON(400, gin.H{
+			"error": "无效的ID",
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"message": "修改成功,您的信息已更新：",
+		"message": "修改成功",
 		"data":    updatedInfos,
 	})
+	return
+
 }
 
 //删除
@@ -152,13 +167,24 @@ func (s *AdminService) DeleteInfosService(c *gin.Context) {
 		return
 	}
 
+	//权限验证
+	if !CheckPermission(c, delInfos.Id) {
+		c.JSON(403, gin.H{
+			"error": "权限不足，不能删除他人信息",
+		})
+		return
+	}
+
 	if err := s.AdminBiz.DeleteInfosBiz(delInfos.Id); err != nil {
 		c.JSON(400, gin.H{
 			"error": "删除失败",
 		})
 		return
 	}
+
 	c.JSON(200, gin.H{
 		"message": "删除成功",
+		"data":    delInfos.Id,
 	})
+
 }

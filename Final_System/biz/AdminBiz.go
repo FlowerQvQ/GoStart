@@ -3,6 +3,7 @@ package biz
 import (
 	"Final_System/data"
 	"Final_System/model"
+	"log"
 )
 
 type AdminBiz struct {
@@ -16,8 +17,13 @@ func NewAdminBiz(adminData *data.AdminData) *AdminBiz {
 }
 
 // GetInfosBiz 根据id获取管理员信息
-func (b *AdminBiz) GetInfosBiz(id int) (*model.User, error) {
+func (b *AdminBiz) GetInfosBiz(id int) (model.User, error) {
 	result, err := b.AdminData.GetInfosData(id)
+	if err != nil {
+		log.Printf("Failed to get admin info for id %d: %v", id, err)
+		return model.User{}, err
+	}
+	log.Printf("Successfully retrieved admin info for id %d", id)
 	return result, err
 }
 

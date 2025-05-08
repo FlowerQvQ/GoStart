@@ -6,4 +6,6 @@ var ProviderSetData = wire.NewSet(
 	NewData,
 	NewUserData,
 	NewAdminData,
+	NewArticleData,
+	NewCommentData,
 )

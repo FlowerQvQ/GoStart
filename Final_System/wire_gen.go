@@ -9,6 +9,7 @@ package main
 import (
 	"Final_System/biz"
 	"Final_System/data"
+	"Final_System/router"
 	"Final_System/service"
 	"github.com/gin-gonic/gin"
 )
@@ -27,10 +28,18 @@ func InitApp() *gin.Engine {
 	adminData := data.NewAdminData(dataData)
 	adminBiz := biz.NewAdminBiz(adminData)
 	adminService := service.NewAdminService(adminBiz)
-	app := &App{
-		UserService:  userService,
-		AdminService: adminService,
+	articleData := data.NewArticleData(dataData)
+	articleBiz := biz.NewArticleBiz(articleData)
+	articleService := service.NewArticleService(articleBiz)
+	commentData := data.NewCommentData(dataData)
+	commentBiz := biz.NewCommentBiz(commentData)
+	commentService := service.NewCommentService(commentBiz)
+	app := &router.App{
+		UserService:    userService,
+		AdminService:   adminService,
+		ArticleService: articleService,
+		CommentService: commentService,
 	}
-	engine := initGenEngine(app)
+	engine := router.InitGenEngine(app)
 	return engine
 }
