@@ -1,0 +1,20 @@
+git config --global user.name 用户名
+git config --global user.email 邮箱
+
+git clone github复制的文件链接 --- 下载github中的代码
+在文件夹里右键打开git需要先
+git init --- 初始化，文件夹里会出现一个隐藏文件夹，不要造操作它
+git add .文件夹名 --- 把文件夹内的文件和非空设置为准备提交的状态(暂存区)
+git add 文件名 --- 把指定文件添加到暂存区
+git commit -m "备注" --- 提交文件，备注写文件的功能
+git log --- 查看历史提交记录
+git checkout HEAD 文件名 --- 从最后一次提交把文件复制到工作区(会覆盖原文件)
+
+github
+看别人的github项目：
+用git clone + github复制的文件链接 --- 下载github中的代码
+看Star看文章的点赞
+看README.MD看一些别人的项目怎么使用
+issue 给别人提问题
+看License证书
+
